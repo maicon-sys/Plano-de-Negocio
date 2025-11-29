@@ -44,6 +44,33 @@ const PAGE_FOOTER_STYLE: React.CSSProperties = {
 };
 
 
+const FILE_EXTENSIONS = '(pdf|docx?|xlsx?|xls|csv|json|md|ts|tsx)';
+const FILE_LIKE_REGEX = new RegExp(`\\b[^\s"']+\.(${FILE_EXTENSIONS})\\b`, 'gi');
+const QUOTED_FILE_REGEX = new RegExp(`["'“”‘’][^"'“”‘’]+\.(${FILE_EXTENSIONS})["'“”‘’]`, 'gi');
+const MARKDOWN_LINK_FILE_REGEX = new RegExp(`\\[[^\\]]*\\]\\([^\\)]+\.(${FILE_EXTENSIONS})\\)`, 'gi');
+const TECHNICAL_MATRIX_REGEX = /MATRIZ[_\s-]*ESTRATEGICA[_\s-]*SCINE/gi;
+
+const sanitizeTextForPreview = (raw: string): string => {
+  if (!raw) return '';
+
+  let sanitized = raw;
+
+  sanitized = sanitized.replace(MARKDOWN_LINK_FILE_REGEX, 'fonte interna');
+  sanitized = sanitized.replace(QUOTED_FILE_REGEX, 'documento interno');
+  sanitized = sanitized.replace(FILE_LIKE_REGEX, 'documento interno');
+  sanitized = sanitized.replace(TECHNICAL_MATRIX_REGEX, 'fonte interna');
+
+  sanitized = sanitized.replace(
+    new RegExp(`(?:arquivo|planilha|tabela|documento)\s+["'“”‘’]?[^\s"'“”‘’]+\.(${FILE_EXTENSIONS})["'“”‘’]?`, 'gi'),
+    'documento interno'
+  );
+
+  sanitized = sanitized.replace(/[ \t]{2,}/g, ' ');
+
+  return sanitized;
+};
+
+
 export const LiveDocumentPreview: React.FC<LiveDocumentPreviewProps> = ({ projectName, sections, assets, onClose }) => {
   const [isExportingDocx, setIsExportingDocx] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -55,6 +82,14 @@ export const LiveDocumentPreview: React.FC<LiveDocumentPreviewProps> = ({ projec
 
   const sortedSections = sections
     .filter(s => s.content && s.content.trim() !== '');
+
+  const sanitizedSections = sortedSections.map(section => ({
+    ...section,
+    title: sanitizeTextForPreview(section.title || ''),
+    content: sanitizeTextForPreview(section.content || ''),
+  }));
+
+  const sanitizedProjectName = sanitizeTextForPreview(projectName);
 
   useEffect(() => {
     setIsCalculating(true);
@@ -72,7 +107,7 @@ export const LiveDocumentPreview: React.FC<LiveDocumentPreviewProps> = ({ projec
   const handleExportDocx = async () => {
     try {
       setIsExportingDocx(true);
-      const blob = await generateDocx(projectName, sortedSections, assets);
+      const blob = await generateDocx(projectName, sanitizedSections, assets);
       
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -182,7 +217,7 @@ export const LiveDocumentPreview: React.FC<LiveDocumentPreviewProps> = ({ projec
         className="absolute top-0 left-0 w-[210mm] opacity-0 pointer-events-none p-[20mm] bg-white text-justify"
         style={{ zIndex: -1000 }}
       >
-        {sortedSections.map(section => (
+        {sanitizedSections.map(section => (
            <div key={`measure-${section.id}`}>
               <h1 id={section.id} className="chapter-start text-2xl font-bold text-black mt-0 mb-6 pb-2 border-b-2 border-gray-800 uppercase">
                 {section.title}
@@ -233,7 +268,7 @@ export const LiveDocumentPreview: React.FC<LiveDocumentPreviewProps> = ({ projec
             <div className="A4-page" style={A4_PAGE_STYLE}>
               <div style={PAGE_CONTENT_STYLE} className="flex flex-col justify-center items-center text-center">
                 <div className="w-full">
-                  <h1 className="text-5xl font-bold text-gray-800">{projectName}</h1>
+                  <h1 className="text-5xl font-bold text-gray-800">{sanitizedProjectName}</h1>
                   <p className="text-2xl mt-4 text-gray-600">Plano de Negócios</p>
                 </div>
               </div>
@@ -251,7 +286,7 @@ export const LiveDocumentPreview: React.FC<LiveDocumentPreviewProps> = ({ projec
               <div style={PAGE_CONTENT_STYLE}>
                 <h1 className="text-2xl font-bold mb-8 uppercase border-b-2 border-gray-800 pb-2">Sumário</h1>
                 <ul className="space-y-3 text-sm">
-                  {sortedSections.map(section => {
+                  {sanitizedSections.map(section => {
                     const pageNumber = paginatedData?.tocMap[section.id];
                     return (
                       <li key={`toc-${section.id}`} className="flex justify-between items-baseline">
