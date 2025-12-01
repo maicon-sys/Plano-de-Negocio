@@ -340,68 +340,81 @@ const generateRealisticSectionText = (
 const performAuditAndGenerateGaps = (fullContext: string): { gaps: Omit<AnalysisGap, 'createdAt' | 'updatedAt' | 'resolvedAt' | 'status' | 'resolutionScore'>[], overallReadiness: number } => {
     const gaps: Omit<AnalysisGap, 'createdAt' | 'updatedAt' | 'resolvedAt' | 'status' | 'resolutionScore'>[] = [];
     let totalCriteria = 0;
-    
+
+    const severityFromLevel = (level: number): 'A' | 'B' | 'C' => {
+        if (level >= 2) return 'A';
+        if (level === 1) return 'B';
+        return 'C';
+    };
+
+    const formatMissingMessage = (criterionLabel: string, description: string, levelTag: string, severity: 'A' | 'B' | 'C') => ({
+        description: `[${levelTag}] Informação ausente: ${criterionLabel} (critério SEBRAE/BRDE)`,
+        aiFeedback: `Não encontramos nenhuma referência a "${description}" nos textos. Sem esse ponto, o dossiê para SEBRAE/BRDE fica incompleto e pode travar a análise de risco. Inclua dados concretos e fontes para atender ao nível ${levelTag.replace('Nível ', '')}.`,
+        severityLevel: severity,
+    });
+
     if (!hasContent(fullContext)) {
-         VALIDATION_MATRIX.forEach(chapter => {
+        VALIDATION_MATRIX.forEach(chapter => {
             chapter.criteria.forEach(criterion => {
                 totalCriteria++;
+                const severity = severityFromLevel(criterion.level);
                 gaps.push({
                     id: `GAP-${criterion.id}`,
-                    description: `[Nível 0] Informação ausente: ${criterion.label}`,
-                    aiFeedback: `Nenhuma informação encontrada nos documentos sobre "${criterion.description}". É necessário criar este conteúdo do zero.`,
-                    severityLevel: criterion.level >= 2 ? 'A' : 'B',
+                    ...formatMissingMessage(criterion.label, criterion.description, 'Nível 0', severity),
                 });
             });
-         });
-         return { gaps, overallReadiness: 5 };
+        });
+        return { gaps, overallReadiness: 5 };
     }
 
     VALIDATION_MATRIX.forEach(chapter => {
         chapter.criteria.forEach(criterion => {
             totalCriteria++;
+            const severity = severityFromLevel(criterion.level);
             const mainKeywordsFound = criterion.keywords.some(kw => new RegExp(`\\b${kw.replace(/ /g, '\\s*')}\\b`, 'i').test(fullContext));
 
             if (!mainKeywordsFound) {
                 // Nível 0/2 Falha: Existência
                 gaps.push({
                     id: `GAP-${criterion.id}`,
-                    description: `[Nível 0/2] Informação ausente: ${criterion.label}`,
-                    aiFeedback: `A IA não encontrou menções a "${criterion.keywords.join(', ')}" no contexto. Este é um ponto ${criterion.level >= 2 ? 'crítico (exigência bancária)' : 'básico'} que precisa ser abordado.`,
-                    severityLevel: criterion.level >= 2 ? 'A' : 'B',
+                    ...formatMissingMessage(criterion.label, criterion.keywords.join(', '), criterion.level >= 2 ? 'Nível 2' : 'Nível 0/2', severity),
                 });
                 return; // Próximo critério
             }
 
             // Nível 1 Checagem: Profundidade
             if (criterion.level === 1 && criterion.subCriteria && criterion.subCriteria.length > 0) {
-                const missingSubCriteria = criterion.subCriteria.filter(sc => 
+                const missingSubCriteria = criterion.subCriteria.filter(sc =>
                     !sc.keywords.some(kw => new RegExp(`\\b${kw.replace(/ /g, '\\s*')}\\b`, 'i').test(fullContext))
                 );
                 if (missingSubCriteria.length > 0) {
                     gaps.push({
                         id: `GAP-${criterion.id}`,
-                        description: `[Nível 1] Falta profundidade em: ${criterion.label}`,
-                        aiFeedback: `O tópico foi mencionado, mas faltam detalhes específicos sobre: ${missingSubCriteria.map(m => m.label).join(', ')}.`,
-                        severityLevel: 'B',
+                        description: `[Nível 1] Conteúdo superficial em: ${criterion.label}`,
+                        aiFeedback: `O tópico apareceu, mas falta demonstrar profundidade exigida pelo SEBRAE/BRDE. Detalhe: ${missingSubCriteria.map(m => m.label).join(', ')}. Traga evidências, números ou exemplos práticos para fechar o diagnóstico.`,
+                        severityLevel: severity,
                     });
                     return;
                 }
             }
-            
+
             // Nível 3 Checagem: Coerência (Simulação)
-            // A simulação de coerência aqui é simplificada. Apenas verificamos se os conceitos principais estão presentes.
-            // A validação de coerência real aconteceria em uma auditoria manual ou uma IA mais avançada.
-            // O fato de não ter gerado um gap nos níveis anteriores já é um bom sinal de coerência básica.
-            if (criterion.level === 3) {
-                 // Para a simulação, consideramos que se os keywords principais foram encontrados, a coerência é parcial.
-                 // Gaps de coerência são complexos e geralmente apontados manualmente.
+            const hasPendingMarkers = /\[INFORMAÇÃO PENDENTE|TBD|a definir|em aberto/i.test(fullContext);
+            if (criterion.level === 3 && hasPendingMarkers) {
+                gaps.push({
+                    id: `GAP-${criterion.id}`,
+                    description: `[Nível 3] Possível incoerência ou ponto fraco em: ${criterion.label}`,
+                    aiFeedback: `Há menções ao tema, mas os trechos indicam itens pendentes ou não alinhados. Para a leitura de risco do SEBRAE/BRDE, reforce coerência entre premissas, números e narrativa antes de prosseguir.`,
+                    severityLevel: severity,
+                });
+                return;
             }
 
         });
     });
 
     const readiness = Math.max(10, Math.floor(((totalCriteria - gaps.length) / totalCriteria) * 100));
-    
+
     return { gaps, overallReadiness: readiness };
 };
 
@@ -453,23 +466,23 @@ export const runDiagnosisStep = async (
 
     // Final step logic
     if (stepIndex === 9) {
-        logs.push("Consolidando diagnóstico...");
-        logs.push("Executando auditoria completa com base na Matriz de Exigências SEBRAE/BRDE...");
+        logs.push("Consolidando diagnóstico final para o SEBRAE/BRDE...");
+        logs.push("Executando auditoria completa com base na Matriz de Exigências SEBRAE/BRDE, sem uso de APIs externas...");
         const diagnosisContext = matrixValidation.valid ? `${fullContext}\n\n[MATRIZ ESTRATÉGICA]\n${matrixSummary}` : fullContext;
-        
+
         const { gaps, overallReadiness } = performAuditAndGenerateGaps(diagnosisContext);
-        
+
         result.finalDiagnosis = {
             overallReadiness,
             gaps,
         };
 
         if (gaps.length > 0) {
-            logs.push(`Auditoria finalizada. Nível de Prontidão: ${overallReadiness}%. Foram identificadas ${gaps.length} pendências.`);
+            logs.push(`Auditoria finalizada. Prontidão geral: ${overallReadiness}%. Foram identificadas ${gaps.length} pendências que precisam ser resolvidas.`);
         } else {
-            logs.push(`Auditoria finalizada. Nível de Prontidão: ${overallReadiness}%. Nenhuma pendência crítica encontrada!`);
+            logs.push(`Auditoria finalizada. Prontidão geral: ${overallReadiness}%. Nenhuma pendência crítica encontrada, bom trabalho!`);
         }
-        logs.push("Diagnóstico finalizado.");
+        logs.push("Diagnóstico finalizado e pronto para revisão.");
     }
 
     return result;
