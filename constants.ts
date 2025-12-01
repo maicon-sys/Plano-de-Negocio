@@ -253,12 +253,16 @@ export const GLOSSARY_TERMS: Record<string, string> = {
   "Compliance": "Conformidade com leis e regulamentos",
 };
 
-// FIX: A estrutura de seções foi completamente refeita para alinhar-se
-// com o modelo mental do usuário e as diretrizes de geração de conteúdo.
-// A numeração agora é lógica (1.x, 2.x, ...) e corresponde à metodologia SEBRAE + BRDE.
-// Seções iniciais alinhadas diretamente às chaves do generationGuidelines.
-// Cada título é puxado das diretrizes para evitar divergências de nomenclatura.
+// FIX: A estrutura de seções foi reorganizada para refletir o plano SEBRAE + BRDE,
+// contemplando sumário executivo, mercado, marketing, operação, finanças, riscos,
+// governança, jurídico e impacto/ESG. IDs seguem o mapeamento do generationGuidelines
+// para não quebrar integrações, mantendo a hierarquia lógica (1.x, 2.x, ...).
 export const INITIAL_SECTIONS: PlanSection[] = [
+  // --- CAPÍTULO 1: SUMÁRIO EXECUTIVO ---
+  { id: '1.0', chapter: '1. SUMÁRIO EXECUTIVO', title: 'Resumo do Negócio e Proposta de Valor', description: 'Visão geral do negócio, proposta de valor, público-alvo e pedido de crédito.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  { id: '1.1', chapter: '1. SUMÁRIO EXECUTIVO', title: 'Destaques do Plano e Principais Indicadores', description: 'Principais métricas, resultados esperados, impacto e síntese financeira.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  { id: '1.2', chapter: '1. SUMÁRIO EXECUTIVO', title: 'Necessidade de Investimento e Contrapartidas', description: 'Montante solicitado, fontes de recursos, garantias e contrapartidas ao financiador.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+
   // --- CAPÍTULO 2: ANÁLISE DE MERCADO ---
   { id: '2.0', chapter: '2. ANÁLISE DE MERCADO', title: generationGuidelines['2.0'].title, description: 'Contextualiza a análise de mercado e sua função no plano.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
   { id: '2.1', chapter: '2. ANÁLISE DE MERCADO', title: generationGuidelines['2.1'].title, description: 'Mapa de segmentos com dados demográficos, comportamentais e potencial.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
@@ -274,28 +278,36 @@ export const INITIAL_SECTIONS: PlanSection[] = [
   { id: '2.11', chapter: '2. ANÁLISE DE MERCADO', title: generationGuidelines['2.11'].title, description: 'Vantagens competitivas sustentáveis e espaço estratégico identificado.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
   { id: '2.12', chapter: '2. ANÁLISE DE MERCADO', title: generationGuidelines['2.12'].title, description: 'Síntese lógica conectando dados de mercado à viabilidade do plano.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT, isLocked: true },
 
-  // --- CAPÍTULO 3: PRODUTO / SERVIÇO E CONTEÚDO ---
-  { id: '3.1', chapter: '3. PRODUTO / SERVIÇO E CONTEÚDO', title: generationGuidelines['3.1'].title, description: 'Descrição do portfólio, benefícios, diferenciais e aderência ao mercado.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  // --- CAPÍTULO 3: PRODUTO / SERVIÇO E PROPOSTA DE VALOR ---
+  { id: '3.0', chapter: '3. PRODUTO / SERVIÇO E PROPOSTA DE VALOR', title: 'Introdução ao Portfólio e Modelo de Entrega', description: 'Contextualiza o portfólio, modelo de entrega e conexão com as dores de mercado.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  { id: '3.1', chapter: '3. PRODUTO / SERVIÇO E PROPOSTA DE VALOR', title: generationGuidelines['3.1'].title, description: 'Descrição do portfólio, benefícios, diferenciais e aderência ao mercado.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
 
   // --- CAPÍTULO 4: PLANO DE MARKETING E VENDAS ---
+  { id: '4.0', chapter: '4. PLANO DE MARKETING E VENDAS', title: 'Introdução ao Plano de Marketing', description: 'Objetivos de marketing, posicionamento desejado e conexão com o mercado analisado.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
   { id: '4.1', chapter: '4. PLANO DE MARKETING E VENDAS', title: generationGuidelines['4.1'].title, description: 'Posicionamento, 4 Ps e canais de comunicação e distribuição.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
   { id: '4.2', chapter: '4. PLANO DE MARKETING E VENDAS', title: generationGuidelines['4.2'].title, description: 'Estratégia de aquisição, funil e métricas CAC/LTV/ARPU.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
   { id: '4.3', chapter: '4. PLANO DE MARKETING E VENDAS', title: generationGuidelines['4.3'].title, description: 'Metas trimestrais e cronograma tático de marketing.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
 
-  // --- CAPÍTULO 5: ESTRUTURA OPERACIONAL E TECNOLÓGICA ---
-  { id: '5.1', chapter: '5. ESTRUTURA OPERACIONAL E TECNOLÓGICA', title: generationGuidelines['5.1'].title, description: 'Processos do dia a dia, recursos necessários e capacidade operacional.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  // --- CAPÍTULO 5: PLANO OPERACIONAL ---
+  { id: '5.0', chapter: '5. PLANO OPERACIONAL', title: 'Introdução Operacional e Infraestrutura', description: 'Visão geral do fluxo operacional, recursos e SLAs necessários.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  { id: '5.1', chapter: '5. PLANO OPERACIONAL', title: generationGuidelines['5.1'].title, description: 'Processos do dia a dia, recursos necessários e capacidade operacional.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
 
   // --- CAPÍTULO 6: EQUIPE E GOVERNANÇA ---
+  { id: '6.0', chapter: '6. EQUIPE E GOVERNANÇA', title: 'Introdução à Estrutura de Pessoas e Gestão', description: 'Contexto de papéis, responsabilidades e diretrizes de governança.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
   { id: '6.1', chapter: '6. EQUIPE E GOVERNANÇA', title: generationGuidelines['6.1'].title, description: 'Composição da equipe, funções, responsabilidades e governança.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
 
-  // --- CAPÍTULO 7: JURÍDICO E COMPLIANCE ---
-  { id: '7.1', chapter: '7. JURÍDICO E COMPLIANCE', title: generationGuidelines['7.1'].title, description: 'Enquadramento legal, políticas, riscos jurídicos e modelos contratuais.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  // --- CAPÍTULO 7: ASPECTOS JURÍDICOS E MODELO SOCIETÁRIO ---
+  { id: '7.0', chapter: '7. ASPECTOS JURÍDICOS E MODELO SOCIETÁRIO', title: 'Introdução Jurídica e Compliance', description: 'Enquadramento legal geral, política de privacidade e obrigações setoriais.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  { id: '7.1', chapter: '7. ASPECTOS JURÍDICOS E MODELO SOCIETÁRIO', title: generationGuidelines['7.1'].title, description: 'Enquadramento legal, políticas, riscos jurídicos e modelos contratuais.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
 
   // --- CAPÍTULO 8: PLANO FINANCEIRO ---
+  { id: '8.0', chapter: '8. PLANO FINANCEIRO', title: 'Resumo das Premissas Financeiras', description: 'Premissas-chave de receita, custos, investimentos e capacidade de pagamento.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
   { id: '8.1', chapter: '8. PLANO FINANCEIRO', title: generationGuidelines['8.1'].title, description: 'DRE, fluxo de caixa, CAPEX/OPEX, DSCR, sensibilidade e garantias.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT, financialData: [] },
 
-  // --- CAPÍTULO 9: RISCOS, CONTRAPARTIDAS, GATILHOS E COVENANTS ---
-  { id: '9.1', chapter: '9. RISCOS, CONTRAPARTIDAS, GATILHOS E COVENANTS', title: generationGuidelines['9.1'].title, description: 'Gatilhos por fase, covenants e relatórios exigidos pelo financiador.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  // --- CAPÍTULO 9: RISCOS, MITIGAÇÕES, IMPACTOS E ESG ---
+  { id: '9.0', chapter: '9. RISCOS, MITIGAÇÕES, IMPACTOS E ESG', title: 'Mapa de Riscos Estratégicos e Operacionais', description: 'Principais riscos, barreiras e planos de mitigação alinhados ao crédito.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  { id: '9.1', chapter: '9. RISCOS, MITIGAÇÕES, IMPACTOS E ESG', title: generationGuidelines['9.1'].title, description: 'Gatilhos por fase, covenants e relatórios exigidos pelo financiador.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
+  { id: '9.2', chapter: '9. RISCOS, MITIGAÇÕES, IMPACTOS E ESG', title: 'Impacto Socioambiental, Cultura e ESG', description: 'Contrapartidas de impacto, cultura e acessibilidade, indicadores ESG e monitoramento.', content: '', status: SectionStatus.PENDING, type: SectionType.TEXT },
 ];
 
 export const DEFAULT_METHODOLOGY = 'SEBRAE+BRDE (Metodologia Padrão)';
