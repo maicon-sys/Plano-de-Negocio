@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Project, User, PlanSection, SectionStatus, AppContextState, 
-  StrategicMatrix, BusinessGoal, SectionType, AnalysisGap, DiagnosisResponse, UploadedFile 
-} from '../types';
-import { 
-  INITIAL_SECTIONS, DEFAULT_STRATEGIC_MATRIX, DEFAULT_METHODOLOGY, 
-  DIAGNOSIS_STEPS, SCINE_CONTEXT 
-} from '../constants';
-import { 
-  runDiagnosisStep, generateSectionContent, validateCompletedSections, updateMatrixFromApprovedContent, runTopicValidation, implementCorrections, reevaluateGap 
-} from '../services/gemini';
-import { Dashboard } from '../components/Dashboard';
-import { AuthScreen } from '../components/AuthScreen';
-import { ContextManager } from '../components/ContextManager';
-import { StrategicMatrixViewer } from '../components/StrategicMatrixViewer';
-import { LiveDocumentPreview } from '../components/LiveDocumentPreview';
-import { FinancialChart } from '../components/FinancialChart';
-import { SelectApiKeyModal } from '../components/SelectApiKeyModal';
-import { ValidationModal } from '../components/ValidationModal';
-import { DiagnosisDetailModal } from '../components/DiagnosisDetailModal';
-import { DocumentationModal } from '../components/DocumentationModal';
+import {
+  Project, User, PlanSection, SectionStatus, AppContextState,
+  StrategicMatrix, BusinessGoal, SectionType, AnalysisGap, DiagnosisResponse, UploadedFile
+} from './types';
+import {
+  INITIAL_SECTIONS, DEFAULT_STRATEGIC_MATRIX, DEFAULT_METHODOLOGY,
+  DIAGNOSIS_STEPS, SCINE_CONTEXT
+} from './constants';
+import {
+  runDiagnosisStep, generateSectionContent, validateCompletedSections, updateMatrixFromApprovedContent, runTopicValidation, implementCorrections, reevaluateGap
+} from './gemini';
+import { Dashboard } from './Dashboard';
+import { AuthScreen } from './AuthScreen';
+import { ContextManager } from './ContextManager';
+import { StrategicMatrixViewer } from './StrategicMatrixViewer';
+import { LiveDocumentPreview } from './LiveDocumentPreview';
+import { FinancialChart } from './FinancialChart';
+import { SelectApiKeyModal } from './SelectApiKeyModal';
+import { ValidationModal } from './ValidationModal';
+import { DiagnosisDetailModal } from './DiagnosisDetailModal';
+import { DocumentationModal } from './DocumentationModal';
 import { 
   LayoutDashboard, FileText, Settings, PlayCircle, 
   CheckCircle, AlertCircle, ChevronRight, Save, ArrowLeft, Loader2, Sparkles, BookOpen, X, Edit, XCircle, HelpCircle
@@ -1231,18 +1231,20 @@ const App: React.FC = () => {
                    </div>
                 </div>
               ) : (
-                <button 
-                  onClick={handleRunDiagnosis}
-                  disabled={!matrixStatus.isReady || isDiagnosing}
-                  className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-colors flex justify-center items-center gap-2 disabled:bg-blue-300 disabled:cursor-not-allowed"
-                 >
-                   <PlayCircle className="w-4 h-4" /> Executar Diagnóstico
-                </button>
-                {!matrixStatus.isReady && (
-                  <p className="text-xs text-red-600 mt-2">
-                    {matrixStatus.reason || 'Gere a Matriz de Valores (Etapa 0) para liberar esta ação.'}
-                  </p>
-                )}
+                <div className="space-y-2">
+                  <button
+                    onClick={handleRunDiagnosis}
+                    disabled={!matrixStatus.isReady || isDiagnosing}
+                    className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-colors flex justify-center items-center gap-2 disabled:bg-blue-300 disabled:cursor-not-allowed"
+                  >
+                    <PlayCircle className="w-4 h-4" /> Executar Diagnóstico
+                  </button>
+                  {!matrixStatus.isReady && (
+                    <p className="text-xs text-red-600 mt-2">
+                      {matrixStatus.reason || 'Gere a Matriz de Valores (Etapa 0) para liberar esta ação.'}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </div>

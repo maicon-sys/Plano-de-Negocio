@@ -1,19 +1,19 @@
-import { 
-    FinancialYear, 
-    ProjectAsset, 
-    DiagnosisResponse, 
-    PlanSection, 
-    StrategicMatrix, 
-    AnalysisGap, 
-    BusinessGoal, 
-    DiagnosisStepResult, 
-    CanvasBlock, 
-    SwotBlock, 
-    MatrixItem, 
-    SectionStatus 
-} from "../types";
-import { DIAGNOSIS_STEPS, DEFAULT_STRATEGIC_MATRIX, VALIDATION_MATRIX } from "../constants";
-import { generationGuidelines } from '../generationGuidelines';
+import {
+    FinancialYear,
+    ProjectAsset,
+    DiagnosisResponse,
+    PlanSection,
+    StrategicMatrix,
+    AnalysisGap,
+    BusinessGoal,
+    DiagnosisStepResult,
+    CanvasBlock,
+    SwotBlock,
+    MatrixItem,
+    SectionStatus
+} from "./types";
+import { DIAGNOSIS_STEPS, DEFAULT_STRATEGIC_MATRIX, VALIDATION_MATRIX } from "./constants";
+import { generationGuidelines } from './generationGuidelines';
 
 // --- HIGH-FIDELITY INTERNAL AI ENGINE ---
 // This module simulates the Gemini API's behavior with realistic, context-aware responses.

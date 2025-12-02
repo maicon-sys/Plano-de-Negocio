@@ -9,7 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { FinancialYear } from '../types';
+import { FinancialYear } from './types';
 
 interface FinancialChartProps {
   data: FinancialYear[];

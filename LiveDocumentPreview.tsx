@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { FileText, ArrowLeft, Loader2, BookOpen, Download, File } from 'lucide-react';
-import { PlanSection, ProjectAsset } from '../types';
-import { GLOSSARY_TERMS } from '../constants';
-import { generateDocx } from '../services/generateDocx';
-import { paginateContent, PaginatedResult } from '../services/paginateDocument';
+import { PlanSection, ProjectAsset } from './types';
+import { GLOSSARY_TERMS } from './constants';
+import { generateDocx } from './generateDocx';
+import { paginateContent, PaginatedResult } from './paginateDocument';
 
 interface LiveDocumentPreviewProps {
   projectName: string;

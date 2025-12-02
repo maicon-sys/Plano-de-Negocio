@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { X, TrendingUp, AlertOctagon, Lightbulb, Shield, Book, CheckCircle, ChevronDown, MessageSquare, Paperclip, Send, Loader2, FileText } from 'lucide-react';
-import { AnalysisGap, DiagnosisResponse, GapSeverity } from '../types';
+import { AnalysisGap, DiagnosisResponse, GapSeverity } from './types';
 
 interface DiagnosisDetailModalProps {
   isOpen: boolean;

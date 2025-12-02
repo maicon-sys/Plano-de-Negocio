@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StrategicMatrix, MatrixItem, Severity } from '../types';
+import { StrategicMatrix, MatrixItem, Severity } from './types';
 import { Download, TableProperties, ChevronDown, CheckCircle, BarChart, Lightbulb, Zap, AlertTriangle, Maximize } from 'lucide-react';
 
 interface StrategicMatrixViewerProps {

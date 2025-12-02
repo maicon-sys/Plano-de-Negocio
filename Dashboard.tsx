@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Plus, Folder, Trash2, Clock, ExternalLink, LogOut, AlertTriangle, Download, Upload } from 'lucide-react';
-import { Project, User } from '../types';
+import { Project, User } from './types';
 
 interface DashboardProps {
   user: User;

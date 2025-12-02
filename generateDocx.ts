@@ -16,7 +16,7 @@ import {
   TableCell,
   WidthType
 } from "docx";
-import { PlanSection, ProjectAsset } from "../types";
+import { PlanSection, ProjectAsset } from "./types";
 
 // Função auxiliar para processar texto Markdown simples (Negrito e quebras de linha)
 const parseTextToRuns = (text: string): TextRun[] => {
